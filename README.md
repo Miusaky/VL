@@ -1,4 +1,4 @@
-##### This repo hosts instructions for installing Void Linux with UEFI EFISTUB and various post-install scripts. All of this is tailored for me. You will need to make adjustments if you wish to use something here. Use at your own risk.
+##### This repo hosts instructions for installing Void Linux with UEFI EFISTUB and various post-installation scripts. All of this is tailored for me. You will need to make adjustments if you wish to use something here. Use at your own risk.
 
 ## Installing Void Linux with UEFI EFISTUB. 
 
