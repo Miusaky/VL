@@ -2,9 +2,6 @@
 
 ## Installing Void Linux with UEFI EFISTUB. 
 
-
-```
-
 ### PRE-INSTALLATION
 
 - SET SHELL
