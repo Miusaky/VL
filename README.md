@@ -4,7 +4,7 @@
 
 ### PRE-INSTALLATION
 
-- SET SHELL
+##### SET SHELL
 ```sh
 - $ bash
 ```
