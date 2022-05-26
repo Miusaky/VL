@@ -176,7 +176,7 @@ early_microcode=yes
 
 ### Install pkgs and setup dotfiles
 
-- BSPWM
+##### BSPWM
 
 ```sh
     - $ sudo xbps-install -Syu git bspwm sxhkd xorg picom kitty ksuperkey rofi xfce4-power-manager polybar lxappearance polkit-gnome elogind firefox mpd mpc ncmpcpp mpv easyeffects
@@ -186,7 +186,7 @@ early_microcode=yes
     - $ sudo reboot
 ```
 
-- AWESOME
+##### AWESOME
 
 
 ```sh
