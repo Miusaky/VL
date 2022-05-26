@@ -176,11 +176,30 @@ early_microcode=yes
 
 ### Install pkgs and setup dotfiles
 
+- BSPWM
+
 ```sh
     - $ sudo xbps-install -Syu git bspwm sxhkd xorg picom kitty ksuperkey rofi xfce4-power-manager polybar lxappearance polkit-gnome elogind firefox mpd mpc ncmpcpp mpv easyeffects
     - $ git clone https://github.com/Miusaky/bspdots.git $HOME
     - $ cd bspdots
     - $ cp --remove-destination -as $HOME/bspdots/. $HOME/
+    - $ sudo reboot
+```
+
+- AWESOME
+
+
+```sh
+    - $ sudo xbps-install -Syu git xorg kitty ksuperkey rofi xfce4-power-manager lxappearance polkit-gnome elogind firefox mpd mpc ncmpcpp mpv easyeffects
+    - $ git clone https://github.com/Miusaky/awdots.git $HOME
+    - $ cd awdots
+    - $ cp --remove-destination -as $HOME/awdots/home/. $HOME/
+
+	- $ git clone https://github.com/Miusaky/VP.git $HOME/.local/VP
+	- $ cd $HOME/.local/VP
+	- $ ./xbps-src binary-bootstrap
+	- $ echo XBPS_ALLOW_RESTRICTED=yes >> etc/conf
+	- $ xbps-install --repository hostdir/binpkgs awesome picom-ibhagwan
     - $ sudo reboot
 ```
 
@@ -199,7 +218,7 @@ DISK="/dev/nvme0n1"
 PART=1
 ```
 
-##### VP
+##### VP 
 ```sh
     - $ git clone https://github.com/void-linux/void-packages.git $HOME/.local/VP
     - $ cd VP
