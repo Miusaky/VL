@@ -164,7 +164,7 @@ early_microcode=yes
 ##### SUDO ACCESS
 ```sh
     # edit sudoers
-    - $ visudo
+    - # visudo
     - Exit root and login user
 ```
 
