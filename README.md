@@ -1,7 +1,3 @@
-##### This repo hosts instructions for installing Void Linux with UEFI EFISTUB and various post-installation scripts. All of this is tailored for me. You will need to make adjustments if you wish to use something here. Use at your own risk.
-
-## Installing Void Linux with UEFI EFISTUB. 
-
 ### PRE-INSTALLATION
 
 ##### SET SHELL
@@ -9,7 +5,7 @@
 - $ bash
 ```
 
-##### Confirm UEFI boot
+##### CONFIRM UEFI
 ```sh
 - $ ls /sys/firmware/efi    # shows output if it's UEFI
 ```
@@ -22,21 +18,23 @@ Mount point | Partition | Partition type | Suggested size
 
 ##### Partition disks
 ```sh
-    - Create partition
+    - CREATE
         - $ wipefs -af /dev/nvme0n1   # wipe drive
         - $ fdisk /dev/nvme0n1        # use fdisk to partition disk
-    - Format parition
+    - FORMAT
         - $ mkfs.vfat /dev/nvme0n1p1
         - $ mkfs.xfs /dev/nvme0n1p2
-    - Mount the filesystem
+    - MOUNT
         - $ mount /dev/nvme0n1p2 /mnt
         - $ mkdir /mnt/boot
+	- $ mkdir /mnt/SCND
         - $ mount /dev/nvme0n1p1 /mnt/boot
+	- $ mount /dev/nvme1n1p1 /mnt/SCND
 ```
 
 ### INSTALLATION
 
-##### Base pkg
+##### BASE PKG
 ```sh
     - $ REPO=https://alpha.de.repo.voidlinux.org/current/
     - $ ARCH=x86_64
@@ -45,7 +43,7 @@ Mount point | Partition | Partition type | Suggested size
     - $ XBPS_ARCH=$ARCH xbps-install -S -r /mnt -R "$REPO" base-system
 ```
 
-##### mount pseudo fs
+##### PSEUDO FS
 ```sh
     - $ mount --rbind /sys /mnt/sys && mount --make-rslave /mnt/sys
     - $ mount --rbind /dev /mnt/dev && mount --make-rslave /mnt/dev
@@ -54,17 +52,17 @@ Mount point | Partition | Partition type | Suggested size
 
 ### SYS CONFIG
 
-##### Dns config
+##### DNS
 ```sh
     - $ cp /etc/resolv.conf /mnt/etc/
 ```
 
-##### Chroot
+##### CHROOT
 ```sh
     - $ PS1="(chroot)# " chroot /mnt/ /bin/bash
 ```
 
-##### Add repositories
+##### ADD REPOSITORIES
 ```sh
     - $ xbps-install -Su void-repo-nonfree void-repo-multilib void-repo-multilib-nonfree
     - $ xbps-install -Su
@@ -72,7 +70,7 @@ Mount point | Partition | Partition type | Suggested size
     - $ xbps-install -Su    # update
 ```
 
-##### Locale
+##### LOCALE
 ```sh
     - $ echo "LANG=en_US.UTF-8" > /etc/locale.conf
     - $ echo "LC_COLLATE=C" >> /etc/locale.conf
@@ -80,35 +78,29 @@ Mount point | Partition | Partition type | Suggested size
     - $ xbps-reconfigure -f glibc-locales
 ```
 
-##### Timezone
+##### TIMEZONE
 ```sh
     - $ ln -sf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
     - $ xbps-install -Su neovim
 ```
 
-##### Hostname
+##### HOSTNAME
 ```sh
     - $ echo void > /etc/hostname
 ```
 
-##### Hosts
-```sh
-127.0.0.1       localhost
-::1             localhost
-```
-
-##### Configure rc.conf
+##### RC.CONF
 ```sh
     - $ nvim /etc/rc.conf
     - $ KEYMAP="se-lat6"             # uncomment KEYMAP
 ```
 
-##### Set root password
+##### SET ROOT PW
 ```sh
     - $ passwd
 ```
 
-##### Configure fstab
+##### FSTAB
 ```sh
     - $ cp /proc/mounts /etc/fstab
     - Delete everything except / and /boot then add tmpfs and efivarfs:
@@ -120,7 +112,7 @@ Mount point | Partition | Partition type | Suggested size
     - $ mount efivarfs`
 ```
 
-##### Dracut
+##### DRACUT
 ```sh
     - $ nvim /etc/dracut.conf.d/boot.conf
 ```
@@ -130,23 +122,23 @@ hostonly=yes
 hostonly_cmdline=no
 use_fstab=yes
 compress="cat"
-omit_dracutmodules+=" dash i18n rpmversion convertfs btrfs lvm qemu multipatch qemu-net lunmask fstab-sys securityfs biosdevname dmraid dmsquash-live mdraid nbd nfs "
+omit_dracutmodules+=" i18n rpmversion convertfs btrfs lvm multipath lunmask fstab-sys securityfs biosdevname dmraid dmsquash-live mdraid nbd nfs "
 nofscks=yes
 no_hostonly_commandline=yes
 early_microcode=yes
 ```
 
-##### Bootloader
+##### BOOTLOADER
 ```sh
-    - $ xbps-install -Su nvidia nvidia-libs nvidia-libs-32bit efibootmgr
+    - $ xbps-install -Su nvidia nvidia-libs nvidia-libs-32bit efibootmgr opendoas
     - $ ls /boot    # show kernel version
-    - $ efibootmgr -d /dev/nvme0n1 -p Y -c -L "Void" -l /vmlinuz-5.15.36_1 -u \         # Y = partition number.
+    - $ efibootmgr -d /dev/nvme0n1 -p Y -c -L "VOID" -l /vmlinuz-5.15.36_1 -u \         # Y = partition number.
     - $ 'root=/dev/nvme0n1p2 rw quiet loglevel=0 console=tty2 nvidia-drm.modeset=1 \
     - $ nowatchdog ipv6.disable=1 udev.log_level=3 \
     - $ initrd=\initramfs-5.11.12_1.img' --verbose
 ```
 
-##### Finalizing steps
+##### FINAL STEPS
 ```sh
     - $ xbps-query -l | grep linux  # check major and minor; linux5.15
     - $ xbps-reconfigure -fa linux<major>.<minor>
@@ -157,7 +149,7 @@ early_microcode=yes
 
 ### POST INSTALLATION
 
-##### Add user
+##### ADD USER
 ```sh
     # enable internet if using dhcpcd
     # if using rc.local no need to do this and just skip to installing zsh and add user.
@@ -167,47 +159,18 @@ early_microcode=yes
     - $ passwd miu
 ```
 
-##### Sudo access
+##### SUDO ACCESS
 ```sh
     # edit sudoers
     - $ visudo
     - Exit root and login user
 ```
 
-### Install pkgs and setup dotfiles
-
-##### BSPWM
-
-```sh
-    - $ sudo xbps-install -Syu git bspwm sxhkd xorg picom kitty ksuperkey rofi xfce4-power-manager polybar lxappearance polkit-gnome elogind firefox mpd mpc ncmpcpp mpv easyeffects
-    - $ git clone https://github.com/Miusaky/bspdots.git $HOME
-    - $ cd bspdots
-    - $ cp --remove-destination -as $HOME/bspdots/. $HOME/
-    - $ sudo reboot
-```
-
-##### AWESOME
-
-
-```sh
-    - $ sudo xbps-install -Syu git xorg kitty ksuperkey rofi xfce4-power-manager lxappearance polkit-gnome elogind firefox mpd mpc ncmpcpp mpv easyeffects
-    - $ git clone https://github.com/Miusaky/awdots.git $HOME
-    - $ cd awdots
-    - $ cp --remove-destination -as $HOME/awdots/home/. $HOME/
-
-	- $ git clone https://github.com/Miusaky/VP.git $HOME/.local/VP
-	- $ cd $HOME/.local/VP
-	- $ ./xbps-src binary-bootstrap
-	- $ echo XBPS_ALLOW_RESTRICTED=yes >> etc/conf
-	- $ xbps-install --repository hostdir/binpkgs awesome picom-ibhagwan
-    - $ sudo reboot
-```
-
 ### MISCELLANEOUS
 
 ##### EFI Kernel hook
 ```sh
-    - $ nvim /etc/default/efibootmgr-kernel-hook
+    - # nvim /etc/default/efibootmgr-kernel-hook
 ```
 
 ```sh
@@ -218,9 +181,24 @@ DISK="/dev/nvme0n1"
 PART=1
 ```
 
+##### DOAS
+```sh
+- # nvim /etc/doas.conf
+
+permit :wheel
+permit nopass :wheel as root cmd /usr/bin/loginctl
+permit persist :wheel
+permit setenv { XAUTHORITY LANG LC_ALL } :wheel
+
+
+- # chown -c root:root /etc/doas.conf
+- # chmod -c 0400 /etc/doas.conf
+- # ln -s $(which doas) /usr/bin/sudo
+```
+
 ##### VP 
 ```sh
-    - $ git clone https://github.com/void-linux/void-packages.git $HOME/.local/VP
+    - $ git clone https://github.com/Miusaky/VP.git $HOME/.local/
     - $ cd VP
     - $ ./xbps-src binary-bootstrap
     - $ echo XBPS_ALLOW_RESTRICTED=yes >> etc/conf
