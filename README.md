@@ -18,7 +18,7 @@ Mount point | Partition | Partition type | Suggested size
 | /mnt | /dev/nvme0n1p2 | Linux Filesystem | Remainder of the device |
 
 
-##### Partition disks
+##### PARTITION DISKS
 ```sh
     - CREATE
         - $ wipefs -af /dev/nvme0n1   # wipe drive
